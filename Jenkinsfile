@@ -17,11 +17,17 @@ pipeline {
                	//def scannerHome = tool 'SonarQube Scanner 3.0'
 			    withSonarQubeEnv('nambasonar') {  
 				
-				sh ''' curl -u admin:admin -X POST ""${sonar}/api/projects/create?"project=myproject&branch=${GIT_BRANCH#*/}&name=myproject-${GIT_BRANCH#*/}""" '''
-				sh ''' curl -u admin:admin -d "projectKey=myproject:${GIT_BRANCH#*/}&gateId=3" -X POST ""${sonar}/api/qualitygates/select"" '''
-				sh ''' curl -u admin:admin -d "projectKey=myproject:${GIT_BRANCH#*/}&profileName=test&language=java" -X POST ""${sonar}/api/qualityprofiles/add_project"" ''' 
-				sh 'sleep 10'
-				sh 'mvn clean install sonar:sonar -Dsonar.projectKey=myproject:${GIT_BRANCH#*/}'
+				//sh ''' curl -u admin:admin -X POST ""${sonar}/api/projects/create?"project=myproject&branch=${GIT_BRANCH#*/}&name=myproject-${GIT_BRANCH#*/}""" '''
+				//sh ''' curl -u admin:admin -d "projectKey=myproject:${GIT_BRANCH#*/}&gateId=3" -X POST ""${sonar}/api/qualitygates/select"" '''
+				//sh ''' curl -u admin:admin -d "projectKey=myproject:${GIT_BRANCH#*/}&profileName=test&language=java" -X POST ""${sonar}/api/qualityprofiles/add_project"" ''' 
+				//sh 'sleep 10'
+				    script{
+					  if (env.BRANCH_NAME == "master"){
+				                sh """ mvn clean install sonar:sonar -Dsonar.projectName=sonar-test -Dsonar.projectKey=sonar-key"""
+					  } else {
+					        sh """ mvn clean install sonar:sonar -Dsonar.projectName=sonar-test -Dsonar.branch.name=$BRANCH_NAME -Dsonar.projectKey=sonar-key"""
+					  }
+				          
 			    }
 		//     timeout(time: 1, unit: 'HOURS') {
                     // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
