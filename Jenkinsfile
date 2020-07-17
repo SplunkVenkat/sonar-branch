@@ -2,7 +2,7 @@ pipeline {
     agent any
     
      environment {
-        sonar = "http://35.232.144.40:9000"
+        sonar = "http://35.202.39.119:9000"
     }
 	
     stages {
